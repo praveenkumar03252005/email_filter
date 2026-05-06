@@ -1,0 +1,6 @@
+{
+  "name": "Groq Email Guard",
+  "description": "A powerful email classification tool powered by Groq API to detect spam and protect your inbox.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
