@@ -9,7 +9,7 @@ dotenv.config();
 
 async function startServer() {
   const app = express();
-  const PORT = process.env.PORT || 3000;
+  const PORT = Number(process.env.PORT) || 3000;
 
   app.use(cors());
   app.use(express.json());
@@ -67,10 +67,20 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    const distPath = path.join(process.cwd(), "dist");
+    const __dirname = path.dirname(new URL(import.meta.url).pathname);
+    const distPath = path.resolve(process.cwd(), "dist");
+    
+    console.log(`[Production] Serving static files from: ${distPath}`);
+    
     app.use(express.static(distPath));
     app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
+      const indexPath = path.join(distPath, "index.html");
+      res.sendFile(indexPath, (err) => {
+        if (err) {
+          console.error(`[Error] Failed to send index.html from ${indexPath}:`, err);
+          res.status(500).send("Build artifact (dist/index.html) not found. Did you run 'npm run build'?");
+        }
+      });
     });
   }
 
